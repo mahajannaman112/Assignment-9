@@ -1,0 +1,71 @@
+#include <iostream>
+#include <list>
+using namespace std;
+
+class Graph {
+    int V;
+    list<pair<int,int>> *adj;
+
+public:
+    Graph(int v){
+        V = v;
+        adj = new list<pair<int,int>>[V+1];
+    }
+
+    void addEdge(int u, int v, int w){
+        adj[u].push_back({v,w});
+        adj[v].push_back({u,w});
+    }
+
+    void Prim(int start){
+        int visited[100] = {0};
+        int cost = 0;
+
+        visited[start] = 1;
+
+        cout << "Prim MST edges:\n";
+
+        for(int k=1;k<V;k++){
+            int mini = 1e9, a=-1, b=-1;
+
+            for(int u=1;u<=V;u++){
+                if(visited[u]){
+                    for(auto p : adj[u]){
+                        int v = p.first;
+                        int w = p.second;
+
+                        if(!visited[v] && w < mini){
+                            mini = w;
+                            a = u;
+                            b = v;
+                        }
+                    }
+                }
+            }
+
+            visited[b] = 1;
+            cout << a << " " << b << " " << mini << endl;
+            cost += mini;
+        }
+
+        cout << "Total Weight = " << cost;
+    }
+};
+
+int main(){
+    int n, m;
+    cin >> n >> m;
+
+    Graph g(n);
+
+    for(int i=0;i<m;i++){
+        int u,v,w;
+        cin >> u >> v >> w;
+        g.addEdge(u,v,w);
+    }
+
+    int start;
+    cin >> start;
+
+    g.Prim(start);
+}
