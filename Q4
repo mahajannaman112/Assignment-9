@@ -1,0 +1,76 @@
+#include <iostream>
+#include <list>
+using namespace std;
+
+class Graph {
+    int V;
+    list<pair<int,int>> *adj;
+
+public:
+    Graph(int v){
+        V = v;
+        adj = new list<pair<int,int>>[V+1];
+    }
+
+    void addEdge(int u, int v, int w){
+        adj[u].push_back({v,w});
+        adj[v].push_back({u,w});
+    }
+
+    void Dijkstra(int src){
+        int dist[100];
+        int visited[100];
+
+        for(int i=1;i<=V;i++){
+            dist[i] = 1e9;
+            visited[i] = 0;
+        }
+
+        dist[src] = 0;
+
+        for(int i=1;i<=V;i++){
+            int u=-1, best = 1e9;
+
+            for(int j=1;j<=V;j++){
+                if(!visited[j] && dist[j] < best){
+                    best = dist[j];
+                    u = j;
+                }
+            }
+
+            visited[u] = 1;
+
+            for(auto p : adj[u]){
+                int v = p.first;
+                int w = p.second;
+
+                if(dist[u] + w < dist[v]){
+                    dist[v] = dist[u] + w;
+                }
+            }
+        }
+
+        cout << "Shortest distances:\n";
+        for(int i=1;i<=V;i++){
+            cout << "Node " << i << " = " << dist[i] << endl;
+        }
+    }
+};
+
+int main(){
+    int n, m;
+    cin >> n >> m;
+
+    Graph g(n);
+
+    for(int i=0;i<m;i++){
+        int u,v,w;
+        cin >> u >> v >> w;
+        g.addEdge(u,v,w);
+    }
+
+    int src;
+    cin >> src;
+
+    g.Dijkstra(src);
+}
